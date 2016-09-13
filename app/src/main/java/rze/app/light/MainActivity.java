@@ -6,14 +6,15 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
 
     boolean b = false, hasFlash = false;
     Camera camera;
     Camera.Parameters parameters;
+    ImageButton tb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,7 @@ public class MainActivity extends Activity {
             Log.d("camera"," has flash");
         }
 
-        ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton);
+        tb = (ImageButton) findViewById(R.id.imageButton);
         tb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,10 +39,12 @@ public class MainActivity extends Activity {
                         parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                         camera.setParameters(parameters);
                         camera.startPreview();
+                        tb.setBackgroundResource(R.drawable.light_on);
                     } else {
                         parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                         camera.setParameters(parameters);
                         camera.stopPreview();
+                        tb.setBackgroundResource(R.drawable.light_off);
                     }
                 }else{
                     Toast.makeText(MainActivity.this, "No Flashlight Support", Toast.LENGTH_SHORT).show();
