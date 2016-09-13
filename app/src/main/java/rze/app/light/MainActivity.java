@@ -3,6 +3,7 @@ package rze.app.light;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,11 +24,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if ( getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+        if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
             camera = Camera.open();
             parameters = camera.getParameters();
             hasFlash = true;
-            Log.d("camera"," has flash");
         }
 
         tb = (ImageButton) findViewById(R.id.imageButton);
@@ -37,26 +37,58 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (hasFlash) {
-                    b = (b) ? false : true;
-                    Log.d("hasFlash"," b is " + String.valueOf(b));
-                    if (b) {
-                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                        camera.setParameters(parameters);
-                        camera.startPreview();
-                        tb.setBackgroundResource(R.drawable.on);
-                        tv.setText(getString(R.string.on));
-                    } else {
-                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                        camera.setParameters(parameters);
-                        camera.stopPreview();
-                        tb.setBackgroundResource(R.drawable.off);
-                        tv.setText(getString(R.string.off));
-                    }
-                }else{
+                    new SetCamera(tb, tv).execute();
+                } else {
                     Toast.makeText(MainActivity.this, "No Flashlight Support", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    private class SetCamera extends AsyncTask<Object, Void, Boolean> {
+
+        private ImageButton tb;
+        private TextView tv;
+
+        public SetCamera(ImageButton _tb, TextView _tv) {
+            tb = _tb;
+            tv = _tv;
+        }
+
+        protected Boolean doInBackground(Object... params) {
+            b = (b) ? false : true;
+            if (b) {
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                camera.setParameters(parameters);
+                camera.startPreview();
+            } else {
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                camera.setParameters(parameters);
+                camera.stopPreview();
+            }
+            return b;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            tv.setText(getString(R.string.dots));
+            if (!b) {
+                tb.setBackgroundResource(R.drawable.on);
+            } else {
+                tb.setBackgroundResource(R.drawable.off);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if (b) {
+                tv.setText(getString(R.string.on));
+            } else {
+                tv.setText(getString(R.string.off));
+            }
+        }
     }
 
     @Override
