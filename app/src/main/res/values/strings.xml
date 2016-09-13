@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Light</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+    <string name="autor">by Ralf Zeiler</string>
 </resources>

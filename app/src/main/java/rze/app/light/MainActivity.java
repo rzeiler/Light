@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -15,6 +16,7 @@ public class MainActivity extends Activity {
     Camera camera;
     Camera.Parameters parameters;
     ImageButton tb;
+    TextView tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,8 @@ public class MainActivity extends Activity {
         }
 
         tb = (ImageButton) findViewById(R.id.imageButton);
+        tv = (TextView) findViewById(R.id.textView);
+
         tb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,21 +43,20 @@ public class MainActivity extends Activity {
                         parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                         camera.setParameters(parameters);
                         camera.startPreview();
-                        tb.setBackgroundResource(R.drawable.light_on);
+                        tb.setBackgroundResource(R.drawable.on);
+                        tv.setText(getString(R.string.on));
                     } else {
                         parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                         camera.setParameters(parameters);
                         camera.stopPreview();
-                        tb.setBackgroundResource(R.drawable.light_off);
+                        tb.setBackgroundResource(R.drawable.off);
+                        tv.setText(getString(R.string.off));
                     }
                 }else{
                     Toast.makeText(MainActivity.this, "No Flashlight Support", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
-
-
     }
 
     @Override
